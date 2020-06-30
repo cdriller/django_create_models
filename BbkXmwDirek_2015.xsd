@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- (c) Deutsche Bundesbank S4 2007-2019 -->
+<!--Fachverfahrenspezifische Schema-Datei Aussenwirtschaftsstatistik Direktinvestitionen-->
+<xs:schema xmlns:dir="http://www.bundesbank.de/xmw/direk/2015-01-01" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:bbk="http://www.bundesbank.de/xmw/2003-01-01" targetNamespace="http://www.bundesbank.de/xmw/direk/2015-01-01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.bundesbank.de/xmw/2003-01-01" schemaLocation="BbkXmwBasis.xsd"/>
+	<!-- Elemente der Substitutionsgruppe IDENTNR-->
+	<xs:element name="FIRMENNR" type="dir:zif8" substitutionGroup="bbk:IDENTNR">
+		<xs:annotation>
+			<xs:documentation>Meldenummer</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!--Datentypen-->
+	<xs:simpleType name="long">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Long-Zahlenformat mit Whitespace-Unterdrückung ohne Vorzeichen</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:long">
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="prozent">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Zahlenformat mit Whitespace-Unterdrückung ohne Vorzeichen für Prozentangaben</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:double">
+			<xs:whiteSpace value="collapse"/>
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="alphanum">
+		<xs:annotation>
+			<xs:documentation>Basisformat für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="[&#x0009;, &#x000A;, &#x000D;, &#x0020;, &#x0021;, &#x0022;, &#x0026;-&#x0029;, &#x002B;-&#x002F;, &#x0030;-&#x0039;, &#x003A;, &#x003F;-&#x0040;, &#x0041;-&#x005A;, &#x005F;, &#x0061;-&#x007A;, &#x00C0;-&#x00D6;, &#x00D8;-&#x00DF;, &#x00E0;-&#x00F6;, &#x00F8;-&#x00FF;]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="text">
+		<xs:annotation>
+			<xs:documentation>Textformat für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="preserve"/>
+			<xs:pattern value="[&#x0009;, &#x000A;, &#x000D;, &#x0020;, &#x0021;, &#x0022;, &#x0026;-&#x0029;, &#x002B;-&#x002F;, &#x0030;-&#x0039;, &#x003A;, &#x003F;-&#x0040;, &#x0041;-&#x005A;, &#x005F;, &#x0061;-&#x007A;, &#x00C0;-&#x00D6;, &#x00D8;-&#x00DF;, &#x00E0;-&#x00F6;, &#x00F8;-&#x00FF;]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="alphanum255">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Textformat mit Whitespace-Normalisierung für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="dir:alphanum">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="alphanum255NoMin">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Textformat mit Whitespace-Normalisierung für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="dir:alphanum">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="text255">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Textformat mit Whitespace-Preserve für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="dir:text">
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="text2000">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Textformat mit Whitespace-Preserve für lange alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="dir:text">
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="isin">
+		<xs:annotation>
+			<xs:documentation>ISIN als Typ</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="12"/>
+			<xs:maxLength value="12"/>
+			<xs:pattern value="\p{Lu}\p{Lu}(\p{Lu}|\d){10}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="meldeart">
+		<xs:annotation>
+			<xs:documentation>Auswahl der Meldearten</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="endgueltig"/>
+			<xs:enumeration value="vorlaeufig"/>
+			<xs:enumeration value="unterschreitet-freigrenze"/>
+			<xs:enumeration value="wird-nachgereicht"/>
+			<xs:enumeration value=""/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="neu">
+		<xs:annotation>
+			<xs:documentation>Grund für die erstmalige Meldung</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="neugruendung"/>
+			<xs:enumeration value="kauf-fusion-uebernahme"/>
+			<xs:enumeration value="ueberschreitet-freigrenze"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="alt">
+		<xs:annotation>
+			<xs:documentation>Grund für eine nicht mehr gemeldete Beteiligung</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="verkauf-an-inlaender"/>
+			<xs:enumeration value="verkauf-an-auslaender"/>
+			<xs:enumeration value="unterschreitet-freigrenze"/>
+			<xs:enumeration value="fusion-liquidation"/>
+			<xs:enumeration value="storno"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="zif8">
+		<xs:annotation>
+			<xs:documentation>8-ziffrige Zahlenfolge, zur Verwendung im Element IDENTNR</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{8}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- Positionstypen -->
+	<xs:complexType name="basisFeldType">
+		<xs:annotation>
+			<xs:documentation>vorzeichenbehaftete Basis-Position mit Einheit = Tsd</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="dir:long">
+				<xs:attribute name="einheit" type="xs:string" use="required" fixed="Waehrung"/>
+				<xs:attribute name="dimension" type="xs:string" use="required" fixed="Tsd"/>
+				<xs:attribute name="beschreibung" type="dir:alphanum255" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="meldefreiType">
+		<xs:annotation>
+			<xs:documentation>Erklärung zur Meldefreiheit in Fehlanzeige</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0">
+			<xs:element name="KAEUFER" type="dir:unternehmen-PrivatpersonType" minOccurs="0" maxOccurs="5000"/>
+			<xs:element name="ERLAEUTERUNG" type="dir:text255" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Erläuterung zu diesem Objekt</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="beteiligung" type="bbk:jaNein" use="required"/>
+		<xs:attribute name="anteil-groessergleich-zehn-prozent" type="bbk:jaNein" use="optional"/>
+		<xs:attribute name="bilanzsumme-groesser-drei-mio" type="bbk:jaNein" use="optional"/>
+		<xs:attribute name="drei-jahre-meldefrei" type="bbk:jaNein" use="optional"/>
+		<xs:attribute name="beteiligung-vorjahr" type="bbk:jaNein" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="beteiligungskategorieType" abstract="false">
+		<xs:annotation>
+			<xs:documentation>Art eines Beteiligungsverhältnisses</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="P47" type="dir:basisFeldType" minOccurs="0"/>
+			<xs:element name="ISIN" type="dir:isin" minOccurs="0"/>
+			<xs:element name="ANTEIL" type="dir:prozent" minOccurs="0"/>
+			<xs:element name="UNMITTELBARE-FIRMA" type="dir:unternehmen-PrivatpersonType" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="unmittelbar-beteiligt" type="bbk:jaNein" use="required"/>
+		<xs:attribute name="mittelbar-beteiligt" type="bbk:jaNein" use="required"/>
+		<xs:attribute name="unmittelbar-bsnotiert" type="bbk:jaNein" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="kenngroessenType">
+		<xs:annotation>
+			<xs:documentation>Kenngrößen</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="UMSATZ">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="dir:long">
+							<xs:attribute name="einheit" type="xs:string" use="required" fixed="Waehrung"/>
+							<xs:attribute name="dimension" type="xs:string" use="required" fixed="Mio"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BESCHAEFTIGTE">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="dir:long">
+							<xs:attribute name="einheit" type="xs:string" use="required" fixed="Anzahl"/>
+							<xs:attribute name="dimension" type="xs:string" use="required" fixed="Eins"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<!--Unternehmenstypen-->
+	<xs:complexType name="unternehmen-PrivatpersonType">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Unternehmen ohne ID</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="NAME" type="dir:alphanum255"/>
+			<xs:element name="STRASSE-POSTFACH" type="dir:alphanum255" minOccurs="0"/>
+			<xs:element name="PLZ" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="dir:alphanum">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SITZ" type="dir:alphanum255" minOccurs="0"/>
+			<xs:element name="WIRTSCHAFTSZWEIG" type="dir:alphanum255" minOccurs="0"/>
+			<xs:element name="INTERNEFNR" type="dir:alphanum255" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="auslaenderType">
+		<xs:annotation>
+			<xs:documentation>Ausländisches Unternehmen</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="dir:unternehmen-PrivatpersonType">
+				<xs:sequence>
+					<xs:element name="LAND" type="bbk:isoLand" minOccurs="0"/>
+					<xs:element name="SELBSTAENDIG" type="bbk:jaNein" minOccurs="0"/>
+					<xs:element name="LAND-ENDEIGENTUEMER" type="bbk:isoLand" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!--Beschreibung Meldung-->
+	<xs:element name="LIEFERUNG-DIREK">
+		<xs:annotation>
+			<xs:documentation>Wurzelelement einer DIREK-Meldung</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="bbk:basisLieferung">
+					<xs:sequence>
+						<xs:element name="MELDUNG" maxOccurs="1">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="bbk:basisMeldung">
+										<xs:sequence>
+											<xs:element name="MELDETERMIN" type="xs:gYear"/>
+											<xs:element name="BILANZSTICHTAG" type="xs:date"/>
+											<xs:choice>
+												<xs:element name="FORMULAR-K3">
+													<xs:annotation>
+														<xs:documentation>K3-Meldungselement</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="WIRTSCHAFTSZWEIG" type="dir:alphanum255" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Wirtschaftszweig des Melders</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="RECHTSFORM" type="dir:alphanum255" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Rechtsform des Melders</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="KENNGROESSEN-MELDER" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Kenngrößen des Melders in Mio Euro</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="dir:kenngroessenType">
+																			<xs:sequence>
+																				<xs:element name="BILANZSUMME">
+																					<xs:complexType>
+																						<xs:simpleContent>
+																							<xs:extension base="dir:long">
+																								<xs:attribute name="einheit" type="xs:string" use="required" fixed="Waehrung"/>
+																								<xs:attribute name="dimension" type="xs:string" use="required" fixed="Mio"/>
+																							</xs:extension>
+																						</xs:simpleContent>
+																					</xs:complexType>
+																				</xs:element>
+																			</xs:sequence>
+																			<xs:attribute name="von-inlaender-abhaengig" type="bbk:jaNein" use="required"/>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="KENNGROESSEN-KONZERN" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Kenngrößen der inländischen Konzernspitze in Mio Euro</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="dir:kenngroessenType">
+																			<xs:sequence>
+																				<xs:element name="BILANZSUMME">
+																					<xs:complexType>
+																						<xs:simpleContent>
+																							<xs:extension base="dir:long">
+																								<xs:attribute name="einheit" type="xs:string" use="required" fixed="Waehrung"/>
+																								<xs:attribute name="dimension" type="xs:string" use="required" fixed="Mio"/>
+																							</xs:extension>
+																						</xs:simpleContent>
+																					</xs:complexType>
+																				</xs:element>
+																				<xs:element name="KONZERN" type="dir:unternehmen-PrivatpersonType" minOccurs="0"/>
+																			</xs:sequence>
+																			<xs:attribute name="nationalebilanz" type="bbk:jaNein" use="required"/>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="K3" minOccurs="0" maxOccurs="5000">
+																<xs:annotation>
+																	<xs:documentation>Informationen zu einer ausländischen Beteiligung des Melders</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="FIRMA">
+																			<xs:annotation>
+																				<xs:documentation>Unternehmensdaten der ausländischen Beteiligung</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:complexContent>
+																					<xs:extension base="dir:auslaenderType"/>
+																				</xs:complexContent>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="BETEILIGUNGSART" type="dir:beteiligungskategorieType" minOccurs="0"/>
+																		<xs:element name="KENNGROESSEN" type="dir:kenngroessenType" minOccurs="0"/>
+																		<xs:element name="BILANZ" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Bilanzdaten und Anteile in Tsd Währungseinheiten</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="BILANZSTICHTAG" type="xs:date"/>
+																					<xs:element name="WAEHRUNG" type="bbk:isoWaehrung"/>
+																					<xs:element name="P08" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausstehenden Einlagen auf das gezeichnete Kapital - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P09" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Melders an den ausstehenden Einlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P10" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannten Unternehmens an den ausstehenden Einlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P11" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Sachanlagen und immaterielle Vermögensgegenstände - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P12" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Finanzanlagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P13" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an verbundene Unternehmen/Beteiligungen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P15" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an den Melder</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P16" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung:Ausleihungen an das als unmittelbar beteiligt genannten Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P17" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Umlaufvermögen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P19" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Forderungen an den Melder</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P20" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung:Forderungen an das als unmittelbar beteiligt genannte Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P21" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Aktiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P22" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Nicht durch Eigenkapital gedeckter Fehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P23" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gezeichnetes oder eingefordertes Kapital, Dotationskapital, Einlagen von Gesellschaftern - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P24" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Auf den Melder entfallender Anteil von P23</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P25" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannten Unternehmen an P23</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P29" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kapitalrücklage - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P30" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnrücklagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P31" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnvortrag/Verlustvortrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P32" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P33" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P35" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P36" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Verbindlichkeiten gegenüber dem als unmittelbar beteiligt genannten Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P37" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen in Deutschland - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P38" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber dem Melder</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P39" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Passiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P40" type="dir:basisFeldType">
+																						<xs:annotation>
+																							<xs:documentation>Bilanzsumme - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P48" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Außerordentliches Ergebnis als Anteil am Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P49" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P50" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P51" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P52" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P53" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>kumulierte erfolgsneutrale Eigenkapitalveränderungen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P54" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Melders an Finanzanlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P55" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannte Unternehmen an Finanzanlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="VORABAUSSCHUETTUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Angaben zu Ausschüttungen aus dem laufenden Geschäftsjahr (z. B. Interimsdividende)</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="RECHNUNGSLEGUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation> Angabe der verwendeten Rechnungslegungsvorschrift (z. B. IFRS, US-GAAP)</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="ERLAEUTERUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kurzerläuterungen </xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																	<xs:attribute name="lfdnr" type="dir:long" use="required"/>
+																	<xs:attribute name="meldeart" type="dir:meldeart" use="required"/>
+																	<xs:attribute name="neu" type="dir:neu" use="optional"/>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="ABGANG" minOccurs="0" maxOccurs="5000">
+																<xs:annotation>
+																	<xs:documentation>Nicht mehr zu meldende ausländische Beteiligung aus dem Vorjahr</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="dir:unternehmen-PrivatpersonType">
+																			<xs:attribute name="alt" type="dir:alt" use="optional"/>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="MITTEILUNG" type="dir:text2000" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Mitteilungen an die Bundesbank zur K3-Meldung</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="FORMULAR-FEHL-K3">
+													<xs:annotation>
+														<xs:documentation>Element zum Einreichen einer K3-Fehlanzeige</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:complexContent>
+															<xs:extension base="dir:meldefreiType">
+																<xs:sequence>
+																	<xs:element name="VERKAUF-AUSLAND" minOccurs="0">
+																		<xs:complexType>
+																			<xs:attribute name="zahlungsmeldung" type="bbk:jaNein" use="required"/>
+																			<xs:attribute name="unterfreigrenze" type="bbk:jaNein" use="optional"/>
+																		</xs:complexType>
+																	</xs:element>
+																</xs:sequence>
+															</xs:extension>
+														</xs:complexContent>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="FORMULAR-K4">
+													<xs:annotation>
+														<xs:documentation>K4-Meldungselement</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="WIRTSCHAFTSZWEIG" type="dir:alphanum255"/>
+															<xs:element name="RECHTSFORM" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Rechtsform des Melders</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:simpleContent>
+																		<xs:extension base="dir:alphanum255NoMin"/>
+																	</xs:simpleContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="K4D" minOccurs="0" maxOccurs="5000">
+																<xs:annotation>
+																	<xs:documentation>Informationen zum Besitz eines Ausländers am Melder</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="FIRMA">
+																			<xs:annotation>
+																				<xs:documentation>Informationen zum ausländischen Beteiligten</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:complexContent>
+																					<xs:extension base="dir:auslaenderType"/>
+																				</xs:complexContent>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="BETEILIGUNGSART" type="dir:beteiligungskategorieType" minOccurs="0"/>
+																		<xs:element name="KENNGROESSEN" type="dir:kenngroessenType" minOccurs="0"/>
+																		<xs:element name="BILANZ" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Bilanzdaten des Melders und Anteile des Ausländers in Tsd Euro	</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="BILANZSTICHTAG" type="xs:date"/>
+																					<xs:element name="P08" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausstehenden Einlagen auf das gezeichnete Kapital - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P09" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des ausländischen Beteiligten an den ausstehenden Einlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P11" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Sachanlagen und immaterielle Vermögensgegenstände - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P12" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Finanzanlagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P13" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an verbundene Unternehmen/Beteiligungen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P15" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an den ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P17" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Umlaufvermögen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P19" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Forderungen an den ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P21" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Aktiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P22" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Nicht durch Eigenkapital gedeckter Fehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P23" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gezeichnetes oder eingefordertes Kapital, Dotationskapital, Einlagen von Gesellschaftern - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P24" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Auf den ausländischen Beteiligten entfallender Anteil von P23</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P29" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kapitalrücklage - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P30" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnrücklagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P31" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnvortrag/Verlustvortrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P32" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P33" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P35" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P37" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen in Deutschland - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P38" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber dem ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P39" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Passiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P40" type="dir:basisFeldType">
+																						<xs:annotation>
+																							<xs:documentation>Bilanzsumme - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P48" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Außerordentliches Ergebnis als Anteil am Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P49" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P50" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P51" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P52" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P54" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des ausländischen Beteiligten an Finanzanlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="VORABAUSSCHUETTUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Angaben zu Ausschüttungen aus dem laufenden Geschäftsjahr (z. B. Interimsdividende)</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="ERLAEUTERUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kurzerläuterungen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																	<xs:attribute name="lfdnr" type="dir:long" use="required"/>
+																	<xs:attribute name="meldeart" type="dir:meldeart" use="required"/>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="K4I" minOccurs="0" maxOccurs="5000">
+																<xs:annotation>
+																	<xs:documentation>Informationen zu einer inländischen Beteiligung des Melders</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:sequence>
+																		<xs:element name="FIRMA">
+																			<xs:annotation>
+																				<xs:documentation>Unternehmensdaten der inländischen Beteiligung</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:complexContent>
+																					<xs:extension base="dir:unternehmen-PrivatpersonType"/>
+																				</xs:complexContent>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="RECHTSFORM" minOccurs="0">
+																			<xs:annotation>
+																				<xs:documentation>Rechtsform des Melders</xs:documentation>
+																			</xs:annotation>
+																			<xs:complexType>
+																				<xs:simpleContent>
+																					<xs:extension base="dir:alphanum255NoMin"/>
+																				</xs:simpleContent>
+																			</xs:complexType>
+																		</xs:element>
+																		<xs:element name="BETEILIGUNGSART" type="dir:beteiligungskategorieType" minOccurs="0"/>
+																		<xs:element name="KENNGROESSEN" type="dir:kenngroessenType" minOccurs="0"/>
+																		<xs:element name="BILANZ" minOccurs="0">
+																			<xs:complexType>
+																				<xs:sequence>
+																					<xs:element name="BILANZSTICHTAG" type="xs:date"/>
+																					<xs:element name="P08" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausstehenden Einlagen auf das gezeichnete Kapital - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P10" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannten Unternehmens an den ausstehenden Einlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P11" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Sachanlagen und immaterielle Vermögensgegenstände - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P12" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Finanzanlagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P13" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an verbundene Unternehmen/Beteiligungen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P15" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Ausleihungen an den ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P16" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung:Ausleihungen an das als unmittelbar beteiligt genannten Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P17" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Umlaufvermögen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P19" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Forderungen an den ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P20" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung:Forderungen an das als unmittelbar beteiligt genannte Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P21" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Aktiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P22" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Nicht durch Eigenkapital gedeckter Fehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P23" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gezeichnetes oder eingefordertes Kapital, Dotationskapital, Einlagen von Gesellschaftern - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P25" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannten Unternehmen an P23</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P29" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kapitalrücklage - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P30" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnrücklagen - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P31" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Gewinnvortrag/Verlustvortrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P32" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P33" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P35" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P36" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Verbindlichkeiten gegenüber dem als unmittelbar beteiligt genannten Unternehmen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P37" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber verbundenen Unternehmen in Deutschland - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P38" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Verbindlichkeiten gegenüber dem ausländischen Beteiligten</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P39" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Übrige Passiva - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P40" type="dir:basisFeldType">
+																						<xs:annotation>
+																							<xs:documentation>Bilanzsumme - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P48" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Außerordentliches Ergebnis als Anteil am Jahresüberschuss/Jahresfehlbetrag - insgesamt</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P49" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P50" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil der Finanzanlagen an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P51" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen im Ausland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P52" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des Umlaufvermögens an verbundenen Unternehmen in Deutschland</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P54" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Anteil des ausländischen Beteiligten an Finanzanlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="P55" type="dir:basisFeldType" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Bei mittelbarer Beteiligung: Anteil des als unmittelbar beteiligt genannte Unternehmen an Finanzanlagen</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="VORABAUSSCHUETTUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Angaben zu Ausschüttungen aus dem laufenden Geschäftsjahr (z. B. Interimsdividende)</xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																					<xs:element name="ERLAEUTERUNG" type="dir:text255" minOccurs="0">
+																						<xs:annotation>
+																							<xs:documentation>Kurzerläuterungen </xs:documentation>
+																						</xs:annotation>
+																					</xs:element>
+																				</xs:sequence>
+																			</xs:complexType>
+																		</xs:element>
+																	</xs:sequence>
+																	<xs:attribute name="lfdnr" type="dir:long" use="required"/>
+																	<xs:attribute name="meldeart" type="dir:meldeart" use="required"/>
+																	<xs:attribute name="neu" type="dir:neu" use="optional"/>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="ABGANG" minOccurs="0" maxOccurs="5000">
+																<xs:annotation>
+																	<xs:documentation>Informationen zu nicht mehr zu meldende inländische Beteiligungen aus dem Vorjahr</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="dir:unternehmen-PrivatpersonType">
+																			<xs:attribute name="alt" type="dir:alt" use="optional"/>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="MITTEILUNG" type="dir:text2000" minOccurs="0">
+																<xs:annotation>
+																	<xs:documentation>Mitteilungen an die Bundesbank zur K4-Meldung</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="neu" type="dir:neu" use="optional"/>
+														<xs:attribute name="selbstaendig" type="bbk:jaNein" use="required"/>
+													</xs:complexType>
+												</xs:element>
+												<xs:element name="FORMULAR-FEHL-K4" type="dir:meldefreiType">
+													<xs:annotation>
+														<xs:documentation>Element zum Einreichen einer K4-Fehlanzeige</xs:documentation>
+													</xs:annotation>
+												</xs:element>
+											</xs:choice>
+										</xs:sequence>
+										<xs:attribute name="storno" type="bbk:jaNein" use="optional"/>
+										<xs:attribute name="aenderungstammdaten" type="bbk:jaNein" use="optional"/>
+										<xs:attribute name="korrekturmeldung" type="bbk:jaNein" use="optional"/>
+										<xs:attribute name="nachmeldung" type="bbk:jaNein" use="optional"/>
+									</xs:extension>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="bereich" type="bbk:bereich" use="required" fixed="Statistik"/>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

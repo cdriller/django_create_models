@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- edited with XMLSpy v2014 sp1 (http://www.altova.com) by 59 users / SMP-Expiration: 2016-02-29 (DEUTSCHE BUNDESBANK) -->
+<!-- (c) Deutsche Bundesbank 2007, 2013, last update 2013-11-07 element PLZ -->
+<xs:schema xmlns:bbk="http://www.bundesbank.de/xmw/2003-01-01" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.bundesbank.de/xmw/2003-01-01" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:simpleType name="alphanum">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Textformat mit Whitespace-Normalisierung für alphanumerische Inhalte</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:token">
+			<xs:whiteSpace value="collapse"/>
+			<xs:minLength value="1"/>
+			<xs:maxLength value="80"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="auslandsbezug">
+		<xs:annotation>
+			<xs:documentation>Attributstyp zur Spezifizierung von Formularinhalten bestimmter Verfahren</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Ausland"/>
+			<xs:enumeration value="Gesamt"/>
+			<xs:enumeration value="Inland"/>
+			<xs:enumeration value="Inland=Gesamt"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="bereich">
+		<xs:annotation>
+			<xs:documentation>Attributstyp  im Wurzelelement als Leitkennung innerhalb der Bundesbank</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Statistik"/>
+			<xs:enumeration value="Aufsicht"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dimension">
+		<xs:annotation>
+			<xs:documentation>Attributstyp für Feldelemente, Größenfaktor.</xs:documentation>
+			<xs:documentation>Der tatsächliche Betrag einer numerischen Angabe ist der Inhalt des Feldelements</xs:documentation>
+			<xs:documentation>multipliziert mit diesem Größenfaktor.</xs:documentation>
+			<xs:documentation>cnt = 1/100</xs:documentation>
+			<xs:documentation>Eins = 1</xs:documentation>
+			<xs:documentation>Tsd = 1000</xs:documentation>
+			<xs:documentation>Mio = 1000000.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="cnt"/>
+			<xs:enumeration value="Eins"/>
+			<xs:enumeration value="Tsd"/>
+			<xs:enumeration value="Mio"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="einheit">
+		<xs:annotation>
+			<xs:documentation>Attributstyp für Feldelemente;
+Einheit, in der die Beträge stehen.
+</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Anzahl"/>
+			<xs:enumeration value="Prozent"/>
+			<xs:enumeration value="Waehrung"/>
+			<xs:enumeration value="Relation"/>
+			<xs:enumeration value="Datum"/>
+			<xs:enumeration value="JaNein"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="email">
+		<xs:annotation>
+			<xs:documentation>Typ für email-Adressen</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:minLength value="3"/>
+			<xs:maxLength value="255"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="isoBundesland">
+		<xs:annotation>
+			<xs:documentation>ISO-Codes der deutschen Bundesländer nach DIN EN ISO 3166-2</xs:documentation>
+			<xs:documentation>BB Brandenburg</xs:documentation>
+			<xs:documentation>BE Berlin</xs:documentation>
+			<xs:documentation>BW Baden-Württemberg</xs:documentation>
+			<xs:documentation>BY Bayern</xs:documentation>
+			<xs:documentation>HB Hansestadt Bremen</xs:documentation>
+			<xs:documentation>HH Hansestadt Hamburg</xs:documentation>
+			<xs:documentation>HE Hessen</xs:documentation>
+			<xs:documentation>MV Mecklenburg-Vorpommern</xs:documentation>
+			<xs:documentation>NI Niedersachsen</xs:documentation>
+			<xs:documentation>NW Nordrhein-Westfalen</xs:documentation>
+			<xs:documentation>RP Rheinland-Pfalz</xs:documentation>
+			<xs:documentation>SH Schleswig-Holstein</xs:documentation>
+			<xs:documentation>SL Saarland</xs:documentation>
+			<xs:documentation>SN Sachsen</xs:documentation>
+			<xs:documentation>ST Sachsen-Anhalt</xs:documentation>
+			<xs:documentation>TH Thüringen</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BB"/>
+			<xs:enumeration value="BE"/>
+			<xs:enumeration value="BW"/>
+			<xs:enumeration value="BY"/>
+			<xs:enumeration value="HB"/>
+			<xs:enumeration value="HH"/>
+			<xs:enumeration value="HE"/>
+			<xs:enumeration value="MV"/>
+			<xs:enumeration value="NI"/>
+			<xs:enumeration value="NW"/>
+			<xs:enumeration value="RP"/>
+			<xs:enumeration value="SH"/>
+			<xs:enumeration value="SL"/>
+			<xs:enumeration value="SN"/>
+			<xs:enumeration value="ST"/>
+			<xs:enumeration value="TH"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="isoLand">
+		<xs:annotation>
+			<xs:documentation>Format der ISO-Ländercodes nach ISO 3166</xs:documentation>
+			<xs:documentation>2 Großbuchstaben oder eine Ziffer und ein Großbuchstabe</xs:documentation>
+			<xs:documentation>oder ein Großbuchstabe und eine Ziffer</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\d|\p{Lu})\p{Lu}"/>
+			<xs:pattern value="\p{Lu}(\d|\p{Lu})"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="isoWaehrung">
+		<xs:annotation>
+			<xs:documentation>Format der ISO-Währungscodes nach ISO 4217
+Drei Großbuchstaben</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(\p{Lu}){3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="jaNein">
+		<xs:annotation>
+			<xs:documentation>Binärer Entscheidungstyp</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ja"/>
+			<xs:enumeration value="nein"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="telnr">
+		<xs:annotation>
+			<xs:documentation>Typ für Telefon/Fax-Nummern. Format wie bei bbk:alphanum</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="bbk:alphanum"/>
+	</xs:simpleType>
+	<xs:simpleType name="wzw2003">
+		<xs:annotation>
+			<xs:documentation>Format der Wirtschaftszweig-2003-Schlüssel;
+2 bis 5 Ziffern
+oder zwei Großbuchstaben</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d\d\d?\d?\d?"/>
+			<xs:pattern value="\p{Lu}\p{Lu}?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="zif3">
+		<xs:annotation>
+			<xs:documentation> 3ziffrige Zahlenfolge</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d\d\d"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="zif7plus1">
+		<xs:annotation>
+			<xs:documentation>7- oder 8ziffrige Zahlenfolge, zur Verwendung im Element IDENTNR</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{7}"/>
+			<xs:pattern value="\d{8}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="double">
+		<xs:annotation>
+			<xs:documentation>Allgemeines Double-Zahlenformat mit Whitespace-Unterdrückung</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:double">
+			<xs:whiteSpace value="collapse"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="zif8plus1">
+		<xs:annotation>
+			<xs:documentation>8- oder 9ziffrige Zahlenfolge, zur Verwendung im Element IDENTNR</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="\d{8}"/>
+			<xs:pattern value="\d{9}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="KOMMENTAR" type="bbk:alphanum">
+		<xs:annotation>
+			<xs:documentation>Element für Kommentare</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="MELDETERMIN">
+		<xs:annotation>
+			<xs:documentation>Element für Meldetermine im Format JJJJ-MM</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:gYearMonth">
+				<xs:whiteSpace value="collapse"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="WKN">
+		<xs:annotation>
+			<xs:documentation>Element im Format einer Wertpapierkennummer
+(6 Ziffern oder Großbuchstaben)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minLength value="1"/>
+				<xs:pattern value="((\d)|(\p{Lu})){6}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="ISIN">
+		<xs:annotation>
+			<xs:documentation>Element im Format einer ISIN
+(Zwei Großbuchstaben, gefolgt von 10 Großbuchstaben oder Ziffern)</xs:documentation>
+		</xs:annotation>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="12"/>
+				<xs:whiteSpace value="collapse"/>
+				<xs:pattern value="\p{Lu}\p{Lu}(\p{Lu}|\d){10}"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="IDENTNR" type="xs:string" abstract="true">
+		<xs:annotation>
+			<xs:documentation>Abstraktes Element zur Identifikation eines Einreichers,
+wird im speziellen Schema durch konkrete Elemente ersetzt</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="adresse" block="restriction" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Allgemeiner Adresstyp, bestehend aus einem Identifikator und Zusatzinformationen</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element ref="bbk:IDENTNR"/>
+			<xs:element name="NAME" type="bbk:alphanum"/>
+			<xs:choice minOccurs="0">
+				<xs:element name="STRASSE" type="bbk:alphanum" minOccurs="0"/>
+				<xs:element name="POSTFACH" type="bbk:alphanum" minOccurs="0"/>
+			</xs:choice>
+			<xs:element name="PLZ" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="20"/>
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ORT" type="bbk:alphanum" minOccurs="0"/>
+			<xs:element name="LAND" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="bbk:isoLand">
+						<xs:whiteSpace value="collapse"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="KONTAKT" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ANREDE" type="bbk:alphanum" minOccurs="0"/>
+						<xs:element name="VORNAME" type="bbk:alphanum" minOccurs="0"/>
+						<xs:element name="ZUNAME" type="bbk:alphanum"/>
+						<xs:element name="ABTEILUNG" type="bbk:alphanum" minOccurs="0"/>
+						<xs:element name="TELEFON" type="bbk:telnr" minOccurs="0"/>
+						<xs:element name="FAX" type="bbk:telnr" minOccurs="0"/>
+						<xs:element name="EMAIL" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="bbk:email">
+									<xs:whiteSpace value="collapse"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="EXTRANET-ID" minOccurs="0">
+							<xs:annotation>
+								<xs:documentation>Benutzername im Bundesbank-ExtraNet (soweit vorhanden): "EXN" gefolgt von 5 Buchstaben oder Ziffern</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="bbk:alphanum">
+									<xs:pattern value="(e|E)(x|X)(n|N)(\p{L}|\d){5}"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="basisMeldung" abstract="true" block="restriction" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Abstrakter Typ für allgemeine Meldungselemente, zur Erweiterung im speziellen Schema</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="MELDER" type="bbk:adresse"/>
+			<xs:element ref="bbk:KOMMENTAR" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="erstellzeit" type="xs:dateTime" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="basisLieferung" abstract="true" block="restriction" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Abstrakter Typ für Wurzelelemente</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ABSENDER" type="bbk:adresse"/>
+			<xs:element name="ERSTELLER" type="bbk:adresse" minOccurs="0"/>
+			<xs:element name="ADRESSAT" type="bbk:adresse" minOccurs="0"/>
+			<xs:element ref="bbk:KOMMENTAR" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="version" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="1.0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="erstellzeit" type="xs:dateTime" use="required"/>
+		<xs:attribute name="stufe" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:NMTOKEN">
+					<xs:enumeration value="Produktion"/>
+					<xs:enumeration value="Test"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="dateireferenz" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="99"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="terminMeldung" abstract="true" block="restriction" final="restriction">
+		<xs:annotation>
+			<xs:documentation>Abstrakter Typ für Meldungen mit definiertem Meldetermin, zur Erweiterung im speziellen Schema</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="bbk:basisMeldung">
+				<xs:sequence>
+					<xs:element ref="bbk:MELDETERMIN"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="basisFeld">
+		<xs:annotation>
+			<xs:documentation>Allgemeiner Typ für Feldelemente vom Inhalt einer Double-Zahl</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="bbk:double">
+				<xs:attribute name="einheit" type="bbk:einheit" use="optional"/>
+				<xs:attribute name="dim" type="bbk:dimension" use="optional"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>
