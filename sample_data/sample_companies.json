@@ -1,0 +1,24 @@
+[
+	{
+		"name":"IntReal",
+		"strasse":"Ferdinandstraße 61",
+		"plz":"20095",
+		"ort":"Hamburg",
+		"land":"DE"
+	},
+	{
+		"name":"WHIH",
+		"strasse":"Gertrudenstraße 9",
+		"plz":"20095",
+		"ort":"Hamburg",
+		"land":"DE"
+	},
+	{
+		"name":"Beteiligung in Frankreich",
+		"strasse":"Champs-Elysees",
+		"plz":"23456",
+		"ort":"Paris",
+		"land":"FR"
+	}
+
+]
