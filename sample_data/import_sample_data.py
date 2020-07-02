@@ -3,7 +3,7 @@ from models.models import Company
 
 
 if __name__ == '__main__':
-	with open('sample_data/sample_companies.json') as f:
+	with open('sample_companies.json') as f:
 		sample_data_as_json = json.load(f)
 
 	for element in sample_data_as_json:
