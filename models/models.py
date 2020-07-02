@@ -8,6 +8,7 @@ class Company(models.Model):
 	ort = models.CharField(max_length=80)
 	land = models.CharField(max_length=2,validators=[RegexValidator(regex='^.{2}$', message='Length has to be 2', code='nomatch')])
 
+
 class Contact(models.Model):
 	company = models.ForeignKey(Company, on_delete=models.CASCADE)
 	anrede = models.CharField(max_length=80)
@@ -18,6 +19,7 @@ class Contact(models.Model):
 	fax = models.CharField(max_length=80)
 	email = models.EmailField()
 	extranet_id = models.CharField(max_length=8)
+
 
 class Report(models.Model):
 	absender = models.ForeignKey(
